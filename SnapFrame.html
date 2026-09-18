@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapFrame | Modular & Repairable Eyewear</title>
+    <style>
+        :root {
+            --bg-color: #FAF8F5;
+            --card-bg: #FFFFFF;
+            --primary: #4A3E3D;
+            --accent: #D4A373;
+            --text-main: #2B2B2B;
+            --text-muted: #666666;
+            --border: #E5E0DA;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo span {
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .hero {
+            max-width: 900px;
+            margin: 4rem auto 2rem auto;
+            text-align: center;
+            padding: 0 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* Lookup Component */
+        .lookup-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            outline: none;
+            text-transform: uppercase;
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent);
+        }
+
+        .input-group button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .input-group button:hover {
+            opacity: 0.9;
+        }
+
+        .hint {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.8rem;
+            text-align: left;
+        }
+
+        /* Dynamic Results */
+        .results-section {
+            display: none;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+            text-align: left;
+        }
+
+        .results-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .parts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .part-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            background: var(--bg-color);
+        }
+
+        .part-card h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .part-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+
+        .part-card .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .error-msg {
+            color: #d9534f;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            SnapFrame
+            <span>Frames that adapt to you</span>
+        </div>
+    </header>
+
+    <main class="hero">
+        <h1>Never Buy a Full Replacement Frame Again</h1>
+        <p>Modular, magnetic eyewear built for instant, affordable repairs. Enter your frame ID below to find exact matching parts.</p>
+
+        <div class="lookup-card">
+            <div class="input-group">
+                <input type="text" id="frameIdInput" placeholder="Try SF-9021 or SF-3011">
+                <button onclick="checkFrameId()">Find Parts</button>
+            </div>
+            <p class="hint">💡 Tip: Your Frame ID is engraved inside your left temple arm.</p>
+
+            <div id="errorMessage" class="error-msg">Frame ID not found. Please try <strong>SF-9021</strong> or <strong>SF-3011</strong>.</div>
+
+            <!-- Dynamic Output Section -->
+            <div id="resultsSection" class="results-section">
+                <div class="results-header" id="modelTitle">Available Parts</div>
+                <div class="parts-grid" id="partsContainer"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mock database of available parts mapped by Frame ID
+        const partsDatabase = {
+            "SF-9021": {
+                name: "SnapFrame Classic Matte Black",
+                parts: [
+                    { title: "Left/Right Temple Arm", spec: "TR90 Material + SS304 Hinge", price: "₹399" },
+                    { title: "Front Outer Rim Accent", spec: "Matte Black Finish", price: "₹499" },
+                    { title: "Bridge Lock Mechanism", spec: "Lock Pin & Compression Spring Kit", price: "₹199" },
+                    { title: "Polarized Sun Clip", spec: "N52 Magnetic Attachment (UV400)", price: "₹699" }
+                ]
+            },
+            "SF-3011": {
+                name: "SnapFrame Sport Performance",
+                parts: [
+                    { title: "High-Impact Temple Pair", spec: "Flex Polymer Grip", price: "₹449" },
+                    { title: "Clear Protective Rim", spec: "Polycarbonate Housing", price: "₹529" },
+                    { title: "Nose Pad Assembly", spec: "Anti-Slip Silicone Base", price: "₹149" }
+                ]
+            }
+        };
+
+        function checkFrameId() {
+            const inputVal = document.getElementById('frameIdInput').value.trim().toUpperCase();
+            const resultsSection = document.getElementById('resultsSection');
+            const errorMessage = document.getElementById('errorMessage');
+            const modelTitle = document.getElementById('modelTitle');
+            const partsContainer = document.getElementById('partsContainer');
+
+            // Reset view
+            resultsSection.style.display = 'none';
+            errorMessage.style.display = 'none';
+            partsContainer.innerHTML = '';
+
+            if (partsDatabase[inputVal]) {
+                const data = partsDatabase[inputVal];
+                modelTitle.innerText = `Compatible Parts for: ${data.name} (${inputVal})`;
+                
+                data.parts.forEach(part => {
+                    const card = document.createElement('div');
+                    card.className = 'part-card';
+                    card.innerHTML = `
+                        <h4>${part.title}</h4>
+                        <p>${part.spec}</p>
+                        <div class="price-row">
+                            <span class="price">${part.price}</span>
+                            <button class="btn-sm">Add Part</button>
+                        </div>
+                    `;
+                    partsContainer.appendChild(card);
+                });
+
+                resultsSection.style.display = 'block';
+            } else {
+                errorMessage.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
